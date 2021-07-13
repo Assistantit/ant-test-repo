@@ -17,7 +17,7 @@
 	<property name="target.temp.dir" location="target/temp" />
 	<property name="lib.dir" value="lib" />
 
-	<!-- ivy start -->
+	<!-- ivy start 
 	<target name="resolve" description="retrieve dependencies with ivy">
 		<echo message="Getting dependencies..." />
 		<ivy:retrieve />
@@ -28,12 +28,41 @@
 
 	</target>
 
-	<!-- install ivy if you don't have ivyide-->
+	install ivy if you don't have ivyide
 	<target name="ivy" description="Install ivy">
 		<mkdir dir="${user.home}/.ant/lib" />
 		<get dest="${user.home}/.ant/lib/ivy.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.4.0-rc1/ivy-2.4.0-rc1.jar" />
 	</target>
 	<!-- ivy end -->
+	
+	<property name="ivy.install.version" value="2.1.0-rc2" />
+    <condition property="ivy.home" value="${env.IVY_HOME}">
+      <isset property="env.IVY_HOME" />
+    </condition>
+    <property name="ivy.home" value="${user.home}/.ant" />
+    <property name="ivy.jar.dir" value="${ivy.home}/lib" />
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+
+    <target name="download-ivy" unless="offline">
+
+        <mkdir dir="${ivy.jar.dir}"/>
+        <!-- download Ivy from web site so that it can be used even without any special installation -->
+        <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
+             dest="${ivy.jar.file}" usetimestamp="true"/>
+    </target>
+
+    <target name="init-ivy" depends="download-ivy">
+      <!-- try to load ivy here from ivy home, in case the user has not already dropped
+              it into ant's lib dir (note that the latter copy will always take precedence).
+              We will not fail as long as local lib dir exists (it may be empty) and
+              ivy is in at least one of ant's lib dir or the local lib dir. -->
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
 
 	<!-- Compile Java source from ${src.dir} and output it to ${web.classes.dir} -->
 	<target name="compile" depends="init, resolve" description="compile source code">
