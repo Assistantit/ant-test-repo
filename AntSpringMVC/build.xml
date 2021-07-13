@@ -33,7 +33,7 @@
 		<mkdir dir="${user.home}/.ant/lib" />
 		<get dest="${user.home}/.ant/lib/ivy.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.4.0-rc1/ivy-2.4.0-rc1.jar" />
 	</target>
-	<!-- ivy end -->
+	ivy end -->
 	
 	<property name="ivy.install.version" value="2.1.0-rc2" />
     <condition property="ivy.home" value="${env.IVY_HOME}">
